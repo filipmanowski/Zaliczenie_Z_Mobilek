@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Personal Finance Tracker</string>
+    <string name="home_title">My finances</string>
+    <string name="add_transaction">Add transaction</string>
+    <string name="balance">Balance</string>
+    <string name="amount">Amount</string>
+    <string name="description">Description</string>
+    <string name="save">Save</string>
+    <string name="fill_all_fields">Fill all fields</string>
+    <string name="transaction_saved">Transaction saved</string>
+
+</resources>
