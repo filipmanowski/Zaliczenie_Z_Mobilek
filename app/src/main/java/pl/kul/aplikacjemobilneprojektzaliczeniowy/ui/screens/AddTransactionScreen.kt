@@ -42,6 +42,7 @@ fun AddTransactionScreen(
         mutableStateOf(transaction?.description ?: "")
     }
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -79,7 +80,9 @@ fun AddTransactionScreen(
 
         Button(
             onClick = {
-                if (amount.isBlank() || description.isBlank() || amount.toDouble() == 0.0) {
+                val amountValue = amount.toDoubleOrNull()
+
+                if (amount.isBlank() || description.isBlank() || amountValue == 0.0) {
                     Toast.makeText(
                         context,
                         context.getString(R.string.fill_all_fields),
