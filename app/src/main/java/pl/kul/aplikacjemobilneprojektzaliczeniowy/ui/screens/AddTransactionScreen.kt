@@ -24,7 +24,6 @@ fun AddTransactionScreen(
     val db = AppDatabase.getDatabase(context)
     val scope = rememberCoroutineScope()
 
-    // ✅ ZAWSZE Flow
     val transactionFlow = remember(transactionId) {
         if (transactionId == null) {
             flowOf(null)
@@ -61,20 +60,20 @@ fun AddTransactionScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
+            value = description,
+            onValueChange = { description = it },
+            label = { Text(stringResource(R.string.description)) },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+        OutlinedTextField(
             value = amount,
             onValueChange = { amount = it },
             label = { Text(stringResource(R.string.amount)) },
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
-
-        OutlinedTextField(
-            value = description,
-            onValueChange = { description = it },
-            label = { Text(stringResource(R.string.description)) },
-            modifier = Modifier.fillMaxWidth()
-        )
 
         Spacer(modifier = Modifier.height(24.dp))
 

@@ -89,8 +89,13 @@ fun TransactionItem(
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
-    var showDialog by remember { mutableStateOf(false) }
     val formatter = NumberFormat.getCurrencyInstance(Locale("pl", "PL"))
+
+    val amountColor =
+        if (transaction.amount < 0)
+            MaterialTheme.colorScheme.error
+        else
+            MaterialTheme.colorScheme.primary
 
     Row(
         modifier = Modifier
@@ -104,32 +109,16 @@ fun TransactionItem(
                 .clickable { onEdit() }
         ) {
             Text(transaction.description)
-            Text(formatter.format(transaction.amount))
+            Text(
+                text = formatter.format(transaction.amount),
+                color = amountColor,
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
 
-        IconButton(onClick = { showDialog = true }) {
+        IconButton(onClick = onDelete) {
             Icon(Icons.Default.Delete, contentDescription = "Usuń")
         }
     }
-
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text(stringResource(R.string.delete)) },
-            text = { Text(stringResource(R.string.confirm_delete)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    onDelete()
-                    showDialog = false
-                }) {
-                    Text(stringResource(R.string.yes))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDialog = false }) {
-                    Text(stringResource(R.string.no))
-                }
-            }
-        )
-    }
 }
+
