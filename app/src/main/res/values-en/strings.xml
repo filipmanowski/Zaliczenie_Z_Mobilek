@@ -8,5 +8,10 @@
     <string name="save">Save</string>
     <string name="fill_all_fields">Fill all fields</string>
     <string name="transaction_saved">Transaction saved</string>
+    <string name="edit_transaction">edit transaction</string>
+    <string name="delete">delete</string>
+    <string name="confirm_delete">are you sure ?</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
 
 </resources>

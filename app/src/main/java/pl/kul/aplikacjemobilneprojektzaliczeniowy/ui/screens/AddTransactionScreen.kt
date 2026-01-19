@@ -1,52 +1,60 @@
 package pl.kul.aplikacjemobilneprojektzaliczeniowy.ui.screens
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import pl.kul.aplikacjemobilneprojektzaliczeniowy.R
-import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import pl.kul.aplikacjemobilneprojektzaliczeniowy.R
 import pl.kul.aplikacjemobilneprojektzaliczeniowy.data.AppDatabase
 import pl.kul.aplikacjemobilneprojektzaliczeniowy.data.Transaction
 
-
-
-
 @Composable
-fun AddTransactionScreen(onBack: () -> Unit){
+fun AddTransactionScreen(
+    transactionId: Int?,
+    onBack: () -> Unit
+) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
     val db = AppDatabase.getDatabase(context)
+    val scope = rememberCoroutineScope()
 
+    // ✅ ZAWSZE Flow
+    val transactionFlow = remember(transactionId) {
+        if (transactionId == null) {
+            flowOf(null)
+        } else {
+            db.transactionDao().getById(transactionId)
+        }
+    }
 
-    var amount by rememberSaveable { mutableStateOf("") }
-    var description by rememberSaveable { mutableStateOf("") }
+    val transaction by transactionFlow.collectAsState(initial = null)
+
+    var amount by rememberSaveable(transaction) {
+        mutableStateOf(transaction?.amount?.toString() ?: "")
+    }
+
+    var description by rememberSaveable(transaction) {
+        mutableStateOf(transaction?.description ?: "")
+    }
 
     Column(
-        modifier = Modifier.
-        fillMaxSize().
-        padding(16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
+
         Text(
-            text = stringResource(id= R.string.add_transaction),
+            text =
+                if (transactionId == null)
+                    stringResource(R.string.add_transaction)
+                else
+                    stringResource(R.string.edit_transaction),
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -55,7 +63,7 @@ fun AddTransactionScreen(onBack: () -> Unit){
         OutlinedTextField(
             value = amount,
             onValueChange = { amount = it },
-            label = { Text(stringResource(id = R.string.amount)) },
+            label = { Text(stringResource(R.string.amount)) },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -64,7 +72,7 @@ fun AddTransactionScreen(onBack: () -> Unit){
         OutlinedTextField(
             value = description,
             onValueChange = { description = it },
-            label = { Text(stringResource(id = R.string.description)) },
+            label = { Text(stringResource(R.string.description)) },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -78,35 +86,39 @@ fun AddTransactionScreen(onBack: () -> Unit){
                         context.getString(R.string.fill_all_fields),
                         Toast.LENGTH_SHORT
                     ).show()
-                } else {
-                    scope.launch {
+                    return@Button
+                }
+
+                scope.launch {
+                    if (transactionId == null) {
                         db.transactionDao().insert(
                             Transaction(
                                 amount = amount.toDouble(),
                                 description = description
                             )
                         )
+                    } else {
+                        db.transactionDao().update(
+                            Transaction(
+                                id = transactionId,
+                                amount = amount.toDouble(),
+                                description = description
+                            )
+                        )
                     }
-
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.transaction_saved),
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    onBack()
                 }
+
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.transaction_saved),
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                onBack()
             },
             modifier = Modifier.fillMaxWidth()
-        )
-        {
-            Text(text = stringResource(id = R.string.save))
+        ) {
+            Text(stringResource(R.string.save))
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AddTransactionPreview() {
-//    AddTransactionScreen()
 }

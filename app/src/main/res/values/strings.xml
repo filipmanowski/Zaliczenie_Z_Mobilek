@@ -8,5 +8,10 @@
     <string name="save">Zapisz</string>
     <string name="fill_all_fields">Uzupełnij wszystkie pola</string>
     <string name="transaction_saved">Transakcja zapisana</string>
+    <string name="edit_transaction">edytuj transakcje</string>
+    <string name="delete">usuń</string>
+    <string name="confirm_delete">na pewno ?</string>
+    <string name="yes">tak</string>
+    <string name="no">nie</string>
 
 </resources>
