@@ -79,7 +79,7 @@ fun AddTransactionScreen(
 
         Button(
             onClick = {
-                if (amount.isBlank() || description.isBlank()) {
+                if (amount.isBlank() || description.isBlank() || amount.toDouble() == 0.0) {
                     Toast.makeText(
                         context,
                         context.getString(R.string.fill_all_fields),
