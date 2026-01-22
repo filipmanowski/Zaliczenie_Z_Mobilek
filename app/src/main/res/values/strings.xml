@@ -13,5 +13,6 @@
     <string name="confirm_delete">na pewno ?</string>
     <string name="yes">tak</string>
     <string name="no">nie</string>
+    <string name="are_you_sure">Czy na pewno chcesz usunąć tę transakcję?</string>
 
 </resources>

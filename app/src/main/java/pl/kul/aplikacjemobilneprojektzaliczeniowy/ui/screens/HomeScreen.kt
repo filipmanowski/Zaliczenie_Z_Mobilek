@@ -35,6 +35,8 @@ fun HomeScreen(
     val balance = transactions.sumOf { it.amount }
     val formatter = NumberFormat.getCurrencyInstance(Locale("pl", "PL"))
 
+    var transactionToDelete by remember { mutableStateOf<Transaction?>(null) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -72,14 +74,39 @@ fun HomeScreen(
                 TransactionItem(
                     transaction = transaction,
                     onEdit = { onEditClick(transaction.id) },
-                    onDelete = {
-                        scope.launch {
-                            db.transactionDao().delete(transaction)
-                        }
+                    onDeleteClick = {
+                        transactionToDelete = transaction
                     }
                 )
             }
         }
+    }
+
+    transactionToDelete?.let { transaction ->
+        AlertDialog(
+            onDismissRequest = { transactionToDelete = null },
+            title = { Text("Potwierdzenie") },
+            text = { Text(stringResource(R.string.are_you_sure)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch {
+                            db.transactionDao().delete(transaction)
+                        }
+                        transactionToDelete = null
+                    }
+                ) {
+                    Text(stringResource(R.string.yes))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { transactionToDelete = null }
+                ) {
+                    Text(stringResource(R.string.no))
+                }
+            }
+        )
     }
 }
 
@@ -87,7 +114,7 @@ fun HomeScreen(
 fun TransactionItem(
     transaction: Transaction,
     onEdit: () -> Unit,
-    onDelete: () -> Unit
+    onDeleteClick: () -> Unit
 ) {
     val formatter = NumberFormat.getCurrencyInstance(Locale("pl", "PL"))
 
@@ -116,9 +143,10 @@ fun TransactionItem(
             )
         }
 
-        IconButton(onClick = onDelete) {
+        IconButton(onClick = onDeleteClick) {
             Icon(Icons.Default.Delete, contentDescription = "Usuń")
         }
     }
 }
+
 
